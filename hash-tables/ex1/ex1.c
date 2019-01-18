@@ -7,9 +7,55 @@ Answer *get_indices_of_item_weights(int *weights, int length, int limit)
 {
   HashTable *ht = create_hash_table(16);
 
-  // YOUR CODE HERE
 
-  return NULL;
+  // YOUR CODE HERE
+  // Create a new Answer struct
+  Answer *answer = malloc(sizeof(Answer));
+
+  // Add each of the weights into the hash table
+  for ( int i = 0; i < length; i++) {
+    hash_table_insert(ht, weights[i], i);
+  }
+
+  // Loop so we can check the items and compare their values
+  // to see which is bigger or smaller
+  for(int i = 0;i < length;i++){
+   int weight = weights[i];
+   int match = limit - weight;
+
+   int index = hash_table_retrieve(ht, match);
+
+   // If we do have an item, compare if match and weight are equal and then
+   // loop and set weight_index to i if the values are matching
+   if(index != -1){
+
+     int weight_index = hash_table_retrieve(ht, weight);
+     if(weight == match){
+       for(int i = 0;i < length;i++){
+         if(weights[i] == weight && i != index){
+           weight_index = i;
+         }
+       }
+     }
+
+     // Set the answer to be returned
+     if(index < weight_index){
+       answer->index_1 = weight_index;
+       answer->index_2 = index;
+     } else {
+       answer->index_1  = index;
+       answer->index_2 = weight_index;
+     }
+
+     // Free up memory
+     destroy_hash_table(ht);
+     return answer;
+   }
+ }
+
+ // If only one item, free memory and return NULL
+ destroy_hash_table(ht);
+ return NULL;
 }
 
 void print_answer(Answer *answer)
